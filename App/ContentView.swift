@@ -89,7 +89,9 @@ struct ContentView: View {
     /// One column — title, tiles, players, buttons — scaled to the screen's width,
     /// so turning the phone sideways makes everything bigger (and it scrolls).
     private func sheet(_ size: CGSize) -> some View {
-        let width = min(size.width - 16, 1100)
+        // On iPad the full width would make the sheet taller than the screen.
+        let cap: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 820 : 1100
+        let width = min(size.width - 16, cap)
         return ScrollView {
             VStack(spacing: 0) {
                 title(width: width)
