@@ -8,14 +8,19 @@ struct DominoFace: View {
         Canvas { ctx, size in
             let pts = DominoFace.layout(pips)
             let rows: CGFloat = pips >= 10 ? 4 : 3
-            let r = min(size.width / 3, size.height / rows) * 0.16
-            let inset = size.width * 0.2
+            // As large as the pattern allows without pips touching.
+            let side = min(size.width, size.height)
+            let r = side * (rows == 4 ? 0.075 : 0.1)
+            let inset = side * 0.18
             let w = size.width - 2 * inset, h = size.height - 2 * inset
+            let color = DominoFace.color(pips)
             for p in pts {
                 let x = inset + w * p.x / 2
                 let y = inset + h * p.y / (rows - 1)
-                ctx.fill(Path(ellipseIn: CGRect(x: x - r, y: y - r, width: 2 * r, height: 2 * r)),
-                         with: .color(.black))
+                let dot = Path(ellipseIn: CGRect(x: x - r, y: y - r, width: 2 * r, height: 2 * r))
+                ctx.fill(dot, with: .color(color))
+                // A thin rim keeps light colors (yellow) readable on the ivory tile.
+                ctx.stroke(dot, with: .color(.black.opacity(0.35)), lineWidth: max(0.5, r * 0.15))
             }
         }
         .background(
@@ -27,6 +32,25 @@ struct DominoFace: View {
         .overlay(RoundedRectangle(cornerRadius: 4).stroke(Color.black.opacity(0.45), lineWidth: 0.75))
         .aspectRatio(1, contentMode: .fit)
         .accessibilityLabel(pips == 0 ? "Double blank" : "\(pips)")
+    }
+
+    /// The usual color-dot double-12 set: each number of pips has its own color.
+    static func color(_ n: Int) -> Color {
+        switch n {
+        case 1: return Color(red: 0.20, green: 0.62, blue: 0.90)   // light blue
+        case 2: return Color(red: 0.12, green: 0.60, blue: 0.24)   // green
+        case 3: return Color(red: 0.86, green: 0.14, blue: 0.14)   // red
+        case 4: return Color(red: 0.52, green: 0.30, blue: 0.13)   // brown
+        case 5: return Color(red: 0.10, green: 0.20, blue: 0.70)   // dark blue
+        case 6: return Color(red: 0.96, green: 0.76, blue: 0.05)   // yellow
+        case 7: return Color(red: 0.58, green: 0.30, blue: 0.75)   // purple
+        case 8: return Color(red: 0.05, green: 0.42, blue: 0.40)   // dark green
+        case 9: return Color(red: 0.06, green: 0.12, blue: 0.40)   // navy
+        case 10: return Color(red: 0.96, green: 0.45, blue: 0.08)  // orange
+        case 11: return Color(red: 0.10, green: 0.10, blue: 0.10)  // black
+        case 12: return Color(red: 0.50, green: 0.50, blue: 0.52)  // gray
+        default: return .black
+        }
     }
 
     /// Pip positions on a 3-column grid: x in 0...2, y in 0...(rows-1); 3 rows up to 9, 4 rows for 10–12.
