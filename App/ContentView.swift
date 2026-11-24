@@ -45,15 +45,7 @@ struct ContentView: View {
                     .transition(.opacity)
             }
         }
-        .onChange(of: focus) { _, field in
-            // Blank fields left behind go back to 0; a 0 being edited clears, so typing 7 gives 7.
-            game.tidyRows()
-            switch field {
-            case .base(let id): game.clearZero(id, base: true)
-            case .entry(let id): game.clearZero(id, base: false)
-            default: break
-            }
-        }
+        .onChange(of: focus) { game.tidyRows() }
         .alert("Start a new match?", isPresented: $confirmNewGame) {
             Button("New Match", role: .destructive) { game.newGame() }
             Button("Cancel", role: .cancel) {}
@@ -343,7 +335,7 @@ private struct PlayerLine: View {
                     .autocorrectionDisabled()
                     .focused(focus, equals: .name(row.id)),
                 width: unit * 2.9, height: height, font: font, alignment: .leading)
-            box(TextField("(n)", text: digits($row.base))
+            box(TextField("", text: digits($row.base), prompt: zero)
                     .keyboardType(.numberPad)
                     .multilineTextAlignment(.trailing)
                     .focused(focus, equals: .base(row.id)),
@@ -353,7 +345,7 @@ private struct PlayerLine: View {
                 signButton("−", on: row.minus, color: Palette.minus) { row.minus = true }
             }
             .frame(width: unit * 0.55, height: height)
-            box(TextField("(x)", text: digits($row.entry))
+            box(TextField("", text: digits($row.entry), prompt: zero)
                     .keyboardType(.numberPad)
                     .multilineTextAlignment(.trailing)
                     .focused(focus, equals: .entry(row.id)),
@@ -376,8 +368,7 @@ private struct PlayerLine: View {
                     }
                 }
             Text("=").font(font)
-            box(Text(row.total.map(String.init) ?? "(n+x)")
-                    .foregroundStyle(row.total == nil ? Color.secondary.opacity(0.5) : .primary),
+            box(Text(String(row.total)),
                 width: unit * 1.55, height: height, font: font, alignment: .trailing)
         }
     }
@@ -409,13 +400,16 @@ private struct PlayerLine: View {
         .accessibilityAddTraits(on ? .isSelected : [])
     }
 
+    /// An empty number field shows a plain 0, so typing 7 gives 7 without the field being rewritten.
+    private var zero: Text { Text("0").foregroundStyle(Color.black) }
+
     /// Keeps a number field to digits (pasted text included).
     private func digits(_ text: Binding<String>) -> Binding<String> {
         Binding(get: { text.wrappedValue },
                 set: {
                     // Digits only, without leading zeros: typing 5 over the starting 0 gives 5.
                     var d = String($0.filter(\.isNumber).prefix(4))
-                    while d.count > 1 && d.hasPrefix("0") { d.removeFirst() }
+                    while d.hasPrefix("0") { d.removeFirst() }   // a lone 0 is the empty field
                     text.wrappedValue = d
                 })
     }

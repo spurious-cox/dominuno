@@ -5,18 +5,17 @@ import SwiftUI
 struct PlayerRow: Codable, Identifiable, Equatable {
     var id = UUID()
     var name = ""
-    var base = "0"       // (n) total before this round
+    var base = ""        // (n) total before this round; empty shows as 0
     var minus = false    // the +/− toggle; + unless the user picks −
-    var entry = "0"      // (x) points left in hand this round
+    var entry = ""       // (x) points left in hand this round; empty shows as 0
 
     var hasName: Bool { !name.trimmingCharacters(in: .whitespaces).isEmpty }
 
     /// A row with a name or any points; the empty row at the bottom is not.
     var isInPlay: Bool { hasName || (Int(base) ?? 0) != 0 || (Int(entry) ?? 0) != 0 }
 
-    /// (n ± x), or nil while the row is empty.
-    var total: Int? {
-        if base.isEmpty && entry.isEmpty { return nil }
+    /// (n ± x); an empty field counts as 0.
+    var total: Int {
         let n = Int(base) ?? 0, x = Int(entry) ?? 0
         return minus ? n - x : n + x
     }
@@ -55,11 +54,6 @@ struct GameState: Codable, Equatable {
 
     /// One empty row at the bottom for the next player, and never fewer than two rows.
     mutating func tidyRows() {
-        // Number fields left blank go back to 0.
-        for i in players.indices {
-            if players[i].base.isEmpty { players[i].base = "0" }
-            if players[i].entry.isEmpty { players[i].entry = "0" }
-        }
         while players.count > GameState.minSeats,
               !players[players.count - 1].isInPlay, !players[players.count - 2].isInPlay {
             players.removeLast()
@@ -105,6 +99,11 @@ final class Game: ObservableObject {
             s = saved
         }
         while s.starts.count < GameState.rounds { s.starts.append(nil) }
+        // Earlier versions stored 0 as "0"; now an empty field means 0.
+        for i in s.players.indices {
+            if s.players[i].base == "0" { s.players[i].base = "" }
+            if s.players[i].entry == "0" { s.players[i].entry = "" }
+        }
         s.tidyRows()
         state = s
     }
@@ -138,12 +137,6 @@ final class Game: ObservableObject {
         state = s
     }
 
-    func clearZero(_ id: UUID, base: Bool) {
-        guard let i = state.players.firstIndex(where: { $0.id == id }) else { return }
-        if base, state.players[i].base == "0" { state.players[i].base = "" }
-        if !base, state.players[i].entry == "0" { state.players[i].entry = "" }
-    }
-
     func tidyRows() {
         var s = state
         s.tidyRows()
@@ -164,8 +157,9 @@ final class Game: ObservableObject {
         var s = state
         s.history.append(Dictionary(uniqueKeysWithValues: s.players.map { ($0.id, $0.base) }))
         for i in s.players.indices where s.players[i].isInPlay {
-            s.players[i].base = String(s.players[i].total ?? 0)
-            s.players[i].entry = "0"
+            let total = s.players[i].total
+            s.players[i].base = total == 0 ? "" : String(total)
+            s.players[i].entry = ""
             s.players[i].minus = false
         }
         s.roundsDone += 1
@@ -180,8 +174,8 @@ final class Game: ObservableObject {
         var s = state
         guard let bases = s.history.popLast() else { return }
         for i in s.players.indices {
-            s.players[i].base = bases[s.players[i].id] ?? "0"
-            s.players[i].entry = "0"
+            s.players[i].base = bases[s.players[i].id] ?? ""
+            s.players[i].entry = ""
             s.players[i].minus = false
         }
         s.roundsDone -= 1
@@ -252,7 +246,7 @@ final class Game: ObservableObject {
         s.players = match.players.map { p in
             var row = PlayerRow()
             row.name = p.name
-            row.base = String(p.total)
+            row.base = p.total == 0 ? "" : String(p.total)
             return row
         }
         s.roundsDone = min(match.roundsDone, GameState.rounds)
