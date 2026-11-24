@@ -16,26 +16,39 @@ Paste these into App Store Connect.
 
 ## Promotional text (170)
 
-Keep score for Mexican Train Dominoes: pick each round's starting double, total everyone's points, and let the camera count the pips left in your hand.
+Down to one tile? Shout Domin-Uno! Then let the camera count everyone else's pips. Easy scorekeeping for Mexican Train game night.
 
 ## Description
 
-Domin-Uno keeps score for Mexican Train Dominoes, so everyone can play instead of adding.
+Down to your last tile? Shout "Domin-Uno!" Then let your phone do the math.
 
-• Starting doubles: tap the double that opened the round, from double-12 down to the double-blank. Doubles already used stay highlighted.
-• Thirteen rounds: tap the round to finish it, and every player's total carries into the next round. Touch and hold to undo.
-• Count pips with the camera: touch and hold a player's points and photograph their leftover tiles. Domin-Uno circles every pip it finds and adds them up. You check the total before it's used.
-• Players: start with two and add up to ten. Someone joining late starts at the average score plus 10%.
-• Save and resume: name a match once and it saves itself after every round. Open it again any time.
-• Works in portrait and landscape, on iPhone and iPad.
+Domin-Uno keeps score for Mexican Train Dominoes, so the whole table can play instead of adding up pips.
 
-No accounts, no ads, nothing collected. Everything stays on your device.
+COUNT PIPS WITH THE CAMERA
+Touch and hold a player's points and take a photo of the tiles left in their hand. Domin-Uno circles every pip it finds and totals them. You check the number, adjust it if needed, and tap Use.
+
+FOLLOW THE ROUNDS
+• Tap the double that started the round, from double-12 down to the double-blank. Doubles already played stay highlighted.
+• All 13 rounds are laid out as tiles. Tap the current round to finish it, and every player's total carries into the next one.
+• Made a mistake? Touch and hold the last round to undo it.
+
+PLAYERS COME AND GO
+• Start with two players and add up to ten. A new row appears as you type each name.
+• Someone joining late starts at the table's average score plus 10%.
+• Use + or − to add or take away points when you need to fix a score.
+
+SAVE THE MATCH
+Name a match once and it saves itself after every round. Open it again tomorrow, or next holiday, and pick up where you left off.
+
+Works on iPhone and iPad, in portrait or landscape.
+
+No accounts, no ads, no tracking. Everything stays on your device, and photos are never saved.
 
 Why "Domin-Uno"? My son and his family always announced they had a single tile remaining by proclaiming "Domin-Uno!"
 
 ## Keywords (100)
 
-dominoes,mexican train,score,scorekeeper,pips,tiles,board game,game night,family,points,tally
+dominoes,domino,scorekeeper,scoreboard,tally,pips,tiles,points,counter,tracker,board,game,double
 
 ## What to tell App Review (notes)
 
@@ -43,5 +56,10 @@ To try pip counting, add a player, then touch and hold the field after + / −. 
 
 ## Screenshots (in AppStore/screenshots)
 
-- iPhone 6.9" (1320 × 2868): iphone-1-scores.png
-- iPad 13" (2064 × 2752): ipad-1-scores.png
+Drag these into the screenshot sections, in this order (not the Header box):
+
+- iPhone 6.1"/6.3" medium display (1206 × 2622): iphone-1-scores.png, iphone-2-pips.png, iphone-3-open.png
+- iPad 13" Display (2064 × 2752): ipad-1-scores.png, ipad-2-pips.png, ipad-3-open.png
+- Header (3840 × 1646): header-3840x1646.png
+
+Rebuild them with `python3 AppStore/make_shots.py` after replacing the captures in AppStore/raw.
