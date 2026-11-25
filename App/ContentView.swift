@@ -31,10 +31,8 @@ struct ContentView: View {
         GeometryReader { geo in
             sheet(geo.size)
         }
-        // A tap anywhere that isn't a field or button puts the keyboard away.
-        .contentShape(Rectangle())
-        .onTapGesture { focus = nil }
-        .background(Palette.page.ignoresSafeArea())
+        // A tap on the background (not a field or button) puts the keyboard away.
+        .background(Palette.page.ignoresSafeArea().onTapGesture { focus = nil })
         .overlay(alignment: .bottom) {
             if let note {
                 Text(note)
@@ -102,9 +100,12 @@ struct ContentView: View {
                     .padding(.bottom, 14)
             }
             .frame(width: width)
-            .background(panel)
-            .frame(maxWidth: .infinity)
+            .background(panel.onTapGesture { focus = nil })
             .padding(.vertical, 8)
+            .frame(maxWidth: .infinity, minHeight: size.height, alignment: .top)
+            // Taps on the margins and the empty space below put the keyboard away; being a
+            // background, it never takes a tap meant for a field or button.
+            .background(Color.clear.contentShape(Rectangle()).onTapGesture { focus = nil })
         }
         .scrollDismissesKeyboard(.interactively)
     }
@@ -352,23 +353,9 @@ private struct PlayerLine: View {
                     .multilineTextAlignment(.trailing)
                     .focused(focus, equals: .entry(row.id)),
                 width: unit * 1.55, height: height, font: font, alignment: .trailing)
-                // While (x) isn't being typed in: a tap edits it, touch and hold counts pips with the camera.
-                .overlay {
-                    if focus.wrappedValue != .entry(row.id) {
-                        Color.clear
-                            .contentShape(Rectangle())
-                            .gesture(
-                                LongPressGesture(minimumDuration: 0.5)
-                                    .onEnded { _ in onCount() }
-                                    .exclusively(before: TapGesture().onEnded {
-                                        focus.wrappedValue = .entry(row.id)
-                                    }))
-                            .accessibilityElement()
-                            .accessibilityLabel("Points left in hand")
-                            .accessibilityAction { focus.wrappedValue = .entry(row.id) }
-                            .accessibilityAction(named: "Count pips with camera", onCount)
-                    }
-                }
+                // The field takes taps itself, so typing always lands here; touch and hold counts pips.
+                .simultaneousGesture(LongPressGesture(minimumDuration: 0.5).onEnded { _ in onCount() })
+                .accessibilityAction(named: "Count pips with camera", onCount)
             Text("=").font(font)
             box(Text(String(row.total)),
                 width: unit * 1.55, height: height, font: font, alignment: .trailing)

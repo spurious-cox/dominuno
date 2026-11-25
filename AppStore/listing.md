@@ -29,8 +29,8 @@ Touch and hold a player's points and take a photo of the tiles left in their han
 
 FOLLOW THE ROUNDS
 • Tap the double that started the round, from double-12 down to the double-blank. Doubles already played stay highlighted.
-• All 13 rounds are laid out as tiles. Tap the current round to finish it, and every player's total carries into the next one.
-• Made a mistake? Touch and hold the last round to undo it.
+• The blue row has a tile for each of the 13 rounds. When everyone's points are in, tap the highlighted tile to finish the round, and every player's total carries into the next one.
+• Made a mistake? Touch and hold the last yellow tile in the blue row to undo it.
 
 PLAYERS COME AND GO
 • Start with two players and add up to ten. A new row appears as you type each name.
