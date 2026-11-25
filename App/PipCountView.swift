@@ -69,13 +69,13 @@ struct PipCountView: View {
         }
     }
 
-    /// A red ring around every pip that was counted.
+    /// A bright red dot on every pip that was counted.
     private var marks: some View {
         GeometryReader { g in
             ForEach(Array((result?.pips ?? []).enumerated()), id: \.offset) { _, r in
-                let size = max(r.width * g.size.width, r.height * g.size.height) * 1.15 + 3
+                let size = max(r.width * g.size.width, r.height * g.size.height)
                 Circle()
-                    .stroke(Color.red, lineWidth: 2)
+                    .fill(Color.red)
                     .frame(width: size, height: size)
                     .position(x: r.midX * g.size.width, y: r.midY * g.size.height)
             }
