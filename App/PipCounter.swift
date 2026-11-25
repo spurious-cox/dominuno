@@ -44,9 +44,43 @@ enum PipCounter {
         }
         let threshold = otsu(histogram, total: w * h)
 
-        // Tile = bright and not strongly colored.
+        // First pass: tile = brighter than the table and not strongly colored. On a dark table this
+        // cutoff is low enough that gray pips pass as tile, so it only locates the tiles.
+        var rough = [Bool](repeating: false, count: w * h)
+        for i in 0..<(w * h) { rough[i] = Int(lum[i]) > threshold && sat[i] < 0.4 }
+
+        // Second pass: compare each pixel with the white of the tiles around it (the average of
+        // first-pass tile pixels in a nearby window, which also follows uneven lighting). Anything
+        // clearly darker than that, such as a gray pip, is not tile.
+        let radius = max(6, min(w, h) / 14)
+        var sumL = [Double](repeating: 0, count: (w + 1) * (h + 1))
+        var sumN = [Double](repeating: 0, count: (w + 1) * (h + 1))
+        for y in 0..<h {
+            var rowL = 0.0, rowN = 0.0
+            for x in 0..<w {
+                let i = y * w + x
+                if rough[i] { rowL += Double(lum[i]); rowN += 1 }
+                let k = (y + 1) * (w + 1) + (x + 1)
+                sumL[k] = sumL[k - (w + 1)] + rowL
+                sumN[k] = sumN[k - (w + 1)] + rowN
+            }
+        }
+        func boxSum(_ s: [Double], _ x0: Int, _ y0: Int, _ x1: Int, _ y1: Int) -> Double {
+            s[(y1 + 1) * (w + 1) + (x1 + 1)] - s[y0 * (w + 1) + (x1 + 1)]
+                - s[(y1 + 1) * (w + 1) + x0] + s[y0 * (w + 1) + x0]
+        }
         var tile = [Bool](repeating: false, count: w * h)
-        for i in 0..<(w * h) { tile[i] = Int(lum[i]) > threshold && sat[i] < 0.4 }
+        for y in 0..<h {
+            let y0 = max(0, y - radius), y1 = min(h - 1, y + radius)
+            for x in 0..<w {
+                let i = y * w + x
+                guard rough[i] else { continue }
+                let x0 = max(0, x - radius), x1 = min(w - 1, x + radius)
+                let n = boxSum(sumN, x0, y0, x1, y1)
+                let white = n > 0 ? boxSum(sumL, x0, y0, x1, y1) / n : 255
+                tile[i] = Double(lum[i]) > white * 0.86
+            }
+        }
 
         // Every patch of non-tile pixels.
         struct Blob { var area = 0, minX = Int.max, minY = Int.max, maxX = 0, maxY = 0, edge = false }
