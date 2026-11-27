@@ -9,17 +9,21 @@
 /* Begin PBXBuildFile section */
 		1AD8E7DB9A96DC8CE50648F1 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD4A95310491EEB50E4F511B /* ContentView.swift */; };
 		324389E4CD28D4B86EFDA944 /* PipCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CBE023B24A99E29EAEF23FC /* PipCountView.swift */; };
+		408FEBD9D0DCC7A695D03F69 /* TileHalves.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9F95886CC66B401F9D60BE /* TileHalves.swift */; };
 		5336B85930DEEA8F125EC5E5 /* PipCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDF65E8785AF67E4CCB9C57 /* PipCounter.swift */; };
 		725E357705C042B8DE9FC84F /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A2F6FA6AE459BA700960D27 /* Game.swift */; };
+		7FFC73E7420EE696ABD84D98 /* CountPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37079D96AD3736B4B5C46FFB /* CountPipeline.swift */; };
 		9CB0F29CD0E89F9C27C16108 /* DominoFace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FBD65C050105E1AAD45476 /* DominoFace.swift */; };
 		BBDF93EEFC2CB607BB981F9B /* DominUnoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FBF5A5885C4FB4A93143EDF /* DominUnoApp.swift */; };
 		FCB14FB054998A5DF6338E93 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C8BA61231918AF35F98813BD /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		37079D96AD3736B4B5C46FFB /* CountPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountPipeline.swift; sourceTree = "<group>"; };
 		3A2F6FA6AE459BA700960D27 /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
 		49FBD65C050105E1AAD45476 /* DominoFace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DominoFace.swift; sourceTree = "<group>"; };
 		4AA0217A374631EFA6B54CF9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		7D9F95886CC66B401F9D60BE /* TileHalves.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileHalves.swift; sourceTree = "<group>"; };
 		7FBF5A5885C4FB4A93143EDF /* DominUnoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DominUnoApp.swift; sourceTree = "<group>"; };
 		9CBE023B24A99E29EAEF23FC /* PipCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipCountView.swift; sourceTree = "<group>"; };
 		C40771E06EFCF741F9914220 /* DominUno.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = DominUno.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -50,12 +54,14 @@
 			children = (
 				C8BA61231918AF35F98813BD /* Assets.xcassets */,
 				CD4A95310491EEB50E4F511B /* ContentView.swift */,
+				37079D96AD3736B4B5C46FFB /* CountPipeline.swift */,
 				49FBD65C050105E1AAD45476 /* DominoFace.swift */,
 				7FBF5A5885C4FB4A93143EDF /* DominUnoApp.swift */,
 				3A2F6FA6AE459BA700960D27 /* Game.swift */,
 				4AA0217A374631EFA6B54CF9 /* Info.plist */,
 				FEDF65E8785AF67E4CCB9C57 /* PipCounter.swift */,
 				9CBE023B24A99E29EAEF23FC /* PipCountView.swift */,
+				7D9F95886CC66B401F9D60BE /* TileHalves.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -132,11 +138,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				1AD8E7DB9A96DC8CE50648F1 /* ContentView.swift in Sources */,
+				7FFC73E7420EE696ABD84D98 /* CountPipeline.swift in Sources */,
 				BBDF93EEFC2CB607BB981F9B /* DominUnoApp.swift in Sources */,
 				9CB0F29CD0E89F9C27C16108 /* DominoFace.swift in Sources */,
 				725E357705C042B8DE9FC84F /* Game.swift in Sources */,
 				324389E4CD28D4B86EFDA944 /* PipCountView.swift in Sources */,
 				5336B85930DEEA8F125EC5E5 /* PipCounter.swift in Sources */,
+				408FEBD9D0DCC7A695D03F69 /* TileHalves.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

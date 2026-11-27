@@ -9,7 +9,7 @@ struct PipCountView: View {
 
     @State private var picking = true
     @State private var photo: UIImage?
-    @State private var result: PipCounter.Result?
+    @State private var result: CountPipeline.Output?
     @State private var points = 0
 
     var body: some View {
@@ -34,11 +34,13 @@ struct PipCountView: View {
                         Image(uiImage: photo)
                             .resizable()
                             .scaledToFit()
+                            .overlay { barTint }
                             .overlay { marks }
+                            .overlay { labels }
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
                     if let result {
-                        Text(result.count == 1 ? "Found 1 pip" : "Found \(result.count) pips")
+                        Text("\(result.total) pips on \(result.halves.count) halves")
                             .font(.headline)
                             .foregroundStyle(.secondary)
                     } else {
@@ -69,15 +71,53 @@ struct PipCountView: View {
         }
     }
 
-    /// A bright red dot on every pip that was counted.
-    private var marks: some View {
+    /// Each divider bar, covered by a semi-transparent white bar with a green tint on top.
+    private var barTint: some View {
         GeometryReader { g in
-            ForEach(Array((result?.pips ?? []).enumerated()), id: \.offset) { _, r in
-                let size = max(r.width * g.size.width, r.height * g.size.height)
-                Circle()
-                    .fill(Color.red)
-                    .frame(width: size, height: size)
-                    .position(x: r.midX * g.size.width, y: r.midY * g.size.height)
+            let sx = g.size.width / Double(result?.workW ?? 1), sy = g.size.height / Double(result?.workH ?? 1)
+            ForEach(Array((result?.bars ?? []).enumerated()), id: \.offset) { _, b in
+                ZStack {
+                    Rectangle().fill(Color.white.opacity(0.6))
+                    Rectangle().fill(Color(red: 0.1, green: 0.8, blue: 0.2).opacity(0.45))
+                }
+                .frame(width: (b.len + 4) * sx, height: (b.thick + 4) * sx)
+                .rotationEffect(.radians(atan2(b.dy, b.dx)))
+                .position(x: b.cx * sx, y: b.cy * sy)
+            }
+        }
+        .allowsHitTesting(false)
+    }
+
+    /// A small dot on every pip that was counted; the dots blink between red and green.
+    private var marks: some View {
+        TimelineView(.periodic(from: .now, by: 0.5)) { timeline in
+            let green = Int(timeline.date.timeIntervalSinceReferenceDate / 0.5) % 2 == 1
+            GeometryReader { g in
+                ForEach(Array((result?.pips ?? []).enumerated()), id: \.offset) { _, r in
+                    let size = 0.5 * max(r.width * g.size.width, r.height * g.size.height)
+                    Circle()
+                        .fill(green ? Color.green : Color.red)
+                        .frame(width: size, height: size)
+                        .position(x: r.midX * g.size.width, y: r.midY * g.size.height)
+                }
+            }
+        }
+        .allowsHitTesting(false)
+    }
+
+    /// The pip count of each half, in white with a black outline, centered on the half.
+    private var labels: some View {
+        GeometryReader { g in
+            ForEach(Array((result?.halves ?? []).enumerated()), id: \.offset) { _, half in
+                let t = result?.tiles.first.map { min($0.B, $0.A / 2) / Double(result?.workH ?? 1) } ?? 0.04
+                let size = max(14, t * g.size.height * 0.55)
+                ZStack {
+                    ForEach(Array([(-1.0, 0.0), (1.0, 0.0), (0.0, -1.0), (0.0, 1.0)].enumerated()), id: \.offset) { _, d in
+                        Text("\(half.count)").font(.system(size: size, weight: .bold)).foregroundStyle(.black).offset(x: d.0 * 1.5, y: d.1 * 1.5)
+                    }
+                    Text("\(half.count)").font(.system(size: size, weight: .bold)).foregroundStyle(.white)
+                }
+                .position(x: half.center.x * g.size.width, y: half.center.y * g.size.height)
             }
         }
         .allowsHitTesting(false)
@@ -93,13 +133,10 @@ struct PipCountView: View {
         let upright = UIGraphicsImageRenderer(size: size, format: format).image { _ in
             image.draw(in: CGRect(origin: .zero, size: size))
         }
-        guard let cg = upright.cgImage else { result = .init(pips: []); return }
+        guard let cg = upright.cgImage else { return }
         Task.detached(priority: .userInitiated) {
-            let found = PipCounter.count(cg)
-            await MainActor.run {
-                result = found
-                points = found.count
-            }
+            let found = CountPipeline.run(cg)
+            await MainActor.run { result = found; points = found.total }
         }
     }
 }
