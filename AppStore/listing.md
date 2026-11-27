@@ -25,7 +25,7 @@ Down to your last tile? Shout "Domin-Uno!" Then let your phone do the math.
 Domin-Uno keeps score for Mexican Train Dominoes, so the whole table can play instead of adding up pips.
 
 COUNT PIPS WITH THE CAMERA
-Touch and hold a player's points and take a photo of the tiles left in their hand. Domin-Uno circles every pip it finds and totals them. You check the number, adjust it if needed, and tap Use.
+Touch and hold a player's points and take a photo of the tiles left in their hand. Domin-Uno circles every pip it finds and totals them. You check the number, adjust it if needed, and tap Use. Tips: keep the tiles apart on a plain background, check that every pip has a blinking dot, and look over colored tiles by eye.
 
 FOLLOW THE ROUNDS
 • Tap the double that started the round, from double-12 down to the double-blank. Doubles already played stay highlighted.
